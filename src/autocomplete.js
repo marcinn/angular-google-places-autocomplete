@@ -36,7 +36,8 @@ angular.module('google.places', [])
                     model: '=ngModel',
                     options: '=?',
                     forceSelection: '=?',
-                    customPlaces: '=?'
+                    customPlaces: '=?',
+                    formatter: '&'
                 },
                 controller: ['$scope', function ($scope) {}],
                 link: function ($scope, element, attrs, controller) {
@@ -90,7 +91,11 @@ angular.module('google.places', [])
 
                     function initNgModelController() {
                         controller.$parsers.push(parse);
-                        controller.$formatters.push(format);
+                        if(attrs.formatter) {
+                            controller.$formatters.push($scope.formatter());
+                        } else {
+                            controller.$formatters.push(defaultFormatter);
+                        }
                         controller.$render = render;
                     }
 
@@ -212,7 +217,7 @@ angular.module('google.places', [])
                         }
                     }
 
-                    function format(modelValue) {
+                    function defaultFormatter(modelValue) {
                         var viewValue = "";
 
                         if (isString(modelValue)) {
